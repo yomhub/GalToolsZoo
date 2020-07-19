@@ -1,0 +1,4 @@
+﻿  dllmain.cpp
+d:\workspace\galhook\src\dllmain.cpp(71): warning C4018: “<”: 有符号/无符号不匹配
+    正在创建库 D:\workspace\GalHook\GalHook\Debug\GalHook.lib 和对象 D:\workspace\GalHook\GalHook\Debug\GalHook.exp
+  GalHook.vcxproj -> D:\workspace\GalHook\GalHook\Debug\GalHook.dll
