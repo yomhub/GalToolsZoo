@@ -1,3 +1,5 @@
+# Guidance v0.2
+
 **0x00** 写在前面|Something you should know before reading|読み前：
 ======================
 
