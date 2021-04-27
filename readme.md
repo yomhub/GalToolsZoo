@@ -50,9 +50,9 @@ These two tutorials contain methods of early Galgame translation and patch, and 
 **0x01** 目的|Purpose
 ======================
 
-该教程以『絆きらめく恋いろは』为例子带领读者了解汉化游戏的过程，旨在让想要着手于破解汉化的读者了解汉化破解的流程。同时介绍逆向分析与数据分析的方法以及介绍程序(以及提供部分实现代码)。    
-This tutorial guids readers how to translate game to Chinese and use『絆きらめく恋いろは』game's translate process for example. It's designed to let readers who want to understand the process of translate process and want to start cracking galgame. It also introduces some methods of reverse analysis and data analysis and introduces the program patching method (and provides partial implementation method).    
-本チュートリアルは『絆きらめく恋いろは』が例をとして、読者達にゲームの中国語化プロセスを紹介し、技術細部を展示する。同時に、リバース分析とデータ分析の方法及びパッチ方法を紹介する(部分実現コード提供する)。
+该教程旨在让想要着手于破解汉化的读者了解汉化破解的流程。同时介绍逆向分析与数据分析的方法以及介绍程序(以及提供部分实现代码)。    
+This purpose to let readers who want to understand the process of translate process and want to start cracking galgame. It also introduces some methods of reverse analysis and data analysis and introduces the program patching method (and provides partial implementation method).    
+本チュートリアルはプログラム中国語化の方法について紹介し、技術細部を展示する。同時に、リバース分析とデータ分析の方法及びパッチ方法を紹介する(部分実現コード提供する)。
 
 **0x02** 解包|Unpack
 ======================
