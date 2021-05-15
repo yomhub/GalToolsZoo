@@ -1,29 +1,16 @@
 # Guidance v0.2
 
-**0x00** 写在前面|Something you should know before reading|読み前：
+**0x00** 写在前面：
 ======================
 
 在阅读该教程前，该教程假设读者具有以下技能：    
-Before reading this tutorial, I assumes you has the following skills:    
-読み前、読者は以下のスキルを備えべきである：
 
     1.  能够(不熟悉地)操作OllyDbg(或x64dbg等调试器)，(阅读者可以速览附件『使用OllyDbg从零开始』的前10章获取基础操作知识)
-        Can use OllyDbg or other Debugger like x64dbg(Even Unfamiliarly).(Readers can get basic operating knowledge in first 10 chapters at 『使用OllyDbg从零开始』).
-        OllyDbg或いは他のDebugger(例：x64dbg)を使用できる(駆け出しても大丈夫)。添付『使用OllyDbg从零开始』の前10章節読めば基礎操作を覚えできる。
     2.  能使用C\C++。
-        Can program through C\C++.
-        C\C++プログラムできる。
     3.  知晓(部分)系统函数调用方式以及常用结构。
-        Know the (partial) system function call method and struct.
-        常用システム関数の使い方と関する結構を知る
-    4.  能阅读(部分)汇编代码。
-        Can read (partial) assembly code.
-        (部分)アセンブリコードを読めできる。
-   
+    4.  能阅读(部分)汇编代码。  
 
-并假设读者已经部署好如下环境：    
-And assumes you has the following tools:    
-そして以下のツールを準備べきである：    
+并假设读者已经部署好如下环境：     
 
     1.  OllyDbg(或x64dbg etc)
     2.  ida
@@ -34,58 +21,35 @@ And assumes you has the following tools:
         (本教程中1|2|5使用的是吾爱破解工具包中的版本)
 
 
-在阅读本教程前，请阅读：    
-Before reading this tutorial you should read:　    
-本チュートリアルを読み前、以下の文章を読みべきである：
-
+在阅读本教程前，推荐阅读以下文章：    
 
 [DC2PC汉化实战](https://bbs.sumisora.net/read.php?tid=10916692)
 
 [Galgame 汉化破解初级教程：以 BGI 为例，从解包到测试](https://bbs.sumisora.net/read.php?tid=11042351)
 
-这2篇文章涵盖了早期Gal汉化的方法，同时也介绍了一些系统函数、文字编码等技术细节，当然也是我的启蒙读物，推荐读者阅读。    
-These two tutorials contain methods of early Galgame translation and patch, and also introduce some technical details such as windows functions and text encoding. They are my enlightenment books so I recommend readers to read them.    
-二つの文章は初期Galgame中国語化方法を含め、若干システム関数と文字コーディングを紹介する。無論これらは私の啓発書であり、読者達に推薦する。
+这2篇文章涵盖了早期Gal汉化的方法，同时也介绍了一些系统函数、文字编码等技术细节。    
 
-**0x01** 目的|Purpose
+**0x01** 目的
 ======================
 
 该教程旨在让想要着手于破解汉化的读者了解汉化破解的流程。同时介绍逆向分析与数据分析的方法以及介绍程序(以及提供部分实现代码)。    
-This purpose to let readers who want to understand the process of translate process and want to start cracking galgame. It also introduces some methods of reverse analysis and data analysis and introduces the program patching method (and provides partial implementation method).    
-本チュートリアルはプログラム中国語化の方法について紹介し、技術細部を展示する。同時に、リバース分析とデータ分析の方法及びパッチ方法を紹介する(部分実現コード提供する)。
 
-**0x02** 解包|Unpack
+**0x02** 解包
 ======================
 
 思考一下我们能怎么解包？    
-So the question is: How can we unpack it?    
-考え見ましょう、どうやってパークを解析するか。    
 
     1.获取解包函数位置，分析解包算法并自己写个解包器。
     2.获取解包函数回传数据的内存地址，通过Dump内存到文件获取明文数据。
     3.获取解包函数返回与入口位置，通过调用函数获取明文。
-
-    1.Locate unpack function and analysis the algorithm then write your own unpacker.
-    2.Find unpack function's memory data then dump decrypted data from memory.
-    3.Use unpack function isself, make a programe to call unpack function to get decrypted data.
-
-    1.アンパック関数の位置を探し、アルゴリズムを学んで、自分のアンパックツールを作る。
-    2.アンパック関数のメモリの中に明文をダンプする。
-    3.そのままアンパック関数を使って、明文データを取る。
     etc...
 
 听起来就很头疼是吧，那让我们从简单的开始:-)    
-It looks hard, let's start from simple:-)    
-ハード高いでしょう、簡単の部分から手をつける:-) 
 
-Step1 定位读包函数|Locate read pack function|パック読み込み関数を探す
+Step1 定位读包函数
 ----------------------
 (先让我们从错误的胡乱分析开始)  
 使用逆向工具挂载主程序，一般来说OD会自动停在程序入口点上，**Ctrl+N**分析导入函数表，可以看到有一个窗口弹出，该窗口例举主程序所有的对外函数调用，诸如**fopen**,**fwrite**,**fclose** etc。  
-(Let's start with the wrong analysis method, be patient)    
-Use OllyDbg to start the main program.In general, OD will pause at main function's entry point automatically. Press **Ctrl+N** to get import functions. You can see a window contains all import functions from environment such as **fopen**,**fwrite**,**fclose** etc.    
-(では、間違いのやり方から手をつけましょう)
-先ずはOllyDbgを通じメインプログラムを起動し、普通ODはメイン関数入口で休止し、**Ctrl+N**を押すすると外部から全ての関数を展示され、例えば**Kernel32**の**fopen**,**fwrite**,**fclose** etc。  
 
 找到**CreateFileA**，**右键**->**在每个参考上设置断点**。能看到**BreakPoints**窗口上除了原先的`cmp esi,edx`之外多了很多的call，对，这些call就是对**CreateFileA**的调用了。
 
